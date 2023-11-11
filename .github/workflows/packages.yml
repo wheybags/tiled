@@ -98,20 +98,9 @@ jobs:
         qbs setup-toolchains --detect
         qbs config defaultProfile x86_64-linux-gnu-gcc-10
 
-    - name: Build Sentry Native
-      run: |
-        curl -sLO https://github.com/getsentry/sentry-native/releases/download/${SENTRY_VERSION}/sentry-native.zip
-        mkdir sentry-native
-        pushd sentry-native
-        unzip -q ../sentry-native.zip
-        cmake -B build -DCMAKE_BUILD_TYPE=RelWithDebInfo
-        cmake --build build --parallel
-        sudo cmake --install build --prefix /usr --config RelWithDebInfo
-        popd
-
     - name: Build Tiled
       run: |
-        qbs install --install-root AppDir config:release qbs.installPrefix:/usr projects.Tiled.sentry:true qbs.debugInformation:true modules.cpp.separateDebugInformation:true modules.cpp.compilerWrapper:ccache
+        qbs install --install-root AppDir config:release qbs.installPrefix:/usr qbs.debugInformation:true modules.cpp.separateDebugInformation:true modules.cpp.compilerWrapper:ccache
 
     - name: Upload symbols and sources to Sentry
       if: github.repository == 'mapeditor/tiled' && github.event_name == 'push'
